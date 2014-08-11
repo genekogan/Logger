@@ -1,0 +1,28 @@
+<template name="logger">
+	{{#each logs}}
+		{{> log}}
+	{{/each}}
+	<hr/>
+	{{#each logLists}}
+		{{> logList}}
+	{{/each}}
+</template>
+
+
+<template name="log">
+  <div>
+    <span class="list_id">{{list_id}} :: </span>
+    <span class="type">{{type}} :: </span>
+    <span class="entry">{{entry}} :: </span>
+    <span class="timestamp">{{timestamp}} :: </span>
+    <span class="timestamp_created">{{timestamp_created}} </span>
+  </div>
+</template>
+
+<template name="logList">
+  <div>
+    <span class="id">{{id}} :: </span>
+    <span class="name">{{name}} </span>
+  </div>
+</template>
+

@@ -1,0 +1,93 @@
+
+<template name = "todos">
+	{{> todoLists}}	
+</template>
+
+
+<template name="todoLists">
+	{{#each todoLists}}
+		<div class="todos_list">
+			<div class="todos_list_name">
+				<h1>
+					<div class="todos_list_name_display">
+						{{#if editing_todos_list}}
+							list name: 
+							<input type="text" size="20" class="todos-list-edit"
+							  value="{{name}}" />
+						{{else}}
+							{{name}}
+						{{/if}}													
+					</div>
+					{{#if editing_todos_list}}{{else}}
+					<div class="todos_list_name_options">
+						<div class="todos_list_add">[+]</div>
+						<div class="todos_list_edit">[e]</div>
+						<div class="todos_list_up">[l]</div>
+					</div>
+					{{/if}}
+				</h1>
+				{{#if adding_todo}}
+					<div class="todo_add">
+						<input type="text" size="30" class="todos-list-add" value="" />
+					</div>
+				{{/if}}
+			</div>		
+			<div class="todos_contents">
+				<ul>
+					{{#each todos}}
+						{{> todo}}
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+	{{/each}}	
+</template>
+
+
+<template name="todo">
+	<li class="todo {{completed}}">
+		<div class="todo_item">
+			<div class="todo_name">
+				<div class="todo_name_display">
+					{{#if editing_todo}}
+						<input type="text" size="16" class="todo-name-edit" value="{{name}}"/>
+					{{else}}
+						{{name}}
+					{{/if}}
+				</div>
+				<div class="todo_name_options">
+					<div class="todo_complete">[c]</div>
+					<div class="todo_edit">[e]</div>
+					<div class="todo_up">[u]</div>
+					<div class="todo_priority">[p]</div>
+				</div>
+			</div>			
+			{{#if editing_todo}}
+				<div class="todo_delete">delete</div>
+				<br/>
+				move to:
+				<ul>
+					{{{getMoveLists}}}
+				</ul>
+			{{else}}
+				{{#if description_visible}}
+					<div class="todo_description">
+						{{#if editing_description}}
+							<textarea class="todo-description-edit" rows="4" cols="30"
+								>{{description}}</textarea>	
+						{{else}}
+							<h2>
+								{{#if description_empty}}
+									<textarea class="todo-description-edit" rows="4" cols="30"
+										>{{description}}</textarea>
+								{{else}}
+									{{{get_description}}}	
+								{{/if}}
+							</h2>
+						{{/if}}
+					</div>
+				{{/if}}
+			{{/if}}
+		</div>			
+	</li>
+</template>

@@ -1,0 +1,126 @@
+body {
+    background-color: #aaa;
+	font-family: "Andale Mono", monospace;
+	font-size:14px;
+	margin:0px;
+}
+
+h1 {
+	font-size:18px;
+}
+
+h2 {
+	font-size:12px;
+}
+
+#navbar {
+	background-color: #666;
+	color:#fff;
+	margin:0px;
+	padding:4px;
+	margin-bottom:6px;
+}
+
+.todo_description {
+	padding-left:30px;
+	padding-top:0px;
+	padding-bottom:0px;
+}
+
+.todos_list {
+	background-color: #ccc;
+	border: 2px solid;
+	height: 96%;
+	overflow-y:auto;
+	border-radius: 8px;
+	margin:10px;
+	padding-top:4px;
+	display: inline-block;
+	width:300px;
+	vertical-align: top;
+}
+
+ul {
+	margin:0px;
+	padding:0px;
+	
+}
+
+li {
+	list-style-type: none;
+	border-bottom: 1px solid #bbb;
+	padding-bottom:0px;
+	padding-top:0px;
+	padding-left:2px;
+}
+
+
+
+
+
+
+.todos_list_name {
+	margin:4px;
+	margin-left:16px;
+	margin-right:16px;
+	margin-bottom:24px;
+	border-bottom: 1px solid #999;
+}
+
+.todos_list_name_display {
+	display: inline-block;
+}
+
+.todos_list_add, .todos_list_edit, .todos_list_up {
+	display: inline-block;
+}
+
+.todos_list_name_options {
+	display: none;
+	float: right;
+}
+
+
+.todos_list_name:hover .todos_list_name_options {
+	display: block;
+}
+
+.todo_name {
+	background-color: #ddd;
+	border-bottom: 1px solid #aaa;
+	margin-top:4px;
+	margin-bottom:10px;
+	margin-left:24px;
+	margin-right:20px;
+}
+
+.todo_name_display {
+	display: inline-block;
+}
+
+.completed .todo_name_display, .completed .todo_description {
+	color:#999;
+	text-decoration:line-through;
+}
+
+.todo_complete, .todo_edit, .todo_up, .todo_priority {
+	display: inline-block;
+}
+
+.todo_name_options {
+	display: none;
+	float: right;
+}
+
+.todo_item:hover .todo_name_options {
+	display: block;
+}
+
+.todo_item:hover {
+	background-color:#ccd;
+}
+
+.todo_item {
+	padding-top:2px;
+	padding-bottom:2px;
+}
