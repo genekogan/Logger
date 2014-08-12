@@ -1,3 +1,4 @@
+
 var okCancelEvents = function (selector, callbacks) {
   	var ok = callbacks.ok || function () {};
   	var cancel = callbacks.cancel || function () {};
@@ -21,55 +22,99 @@ var okCancelEvents = function (selector, callbacks) {
 function addNewTodo(list_id, name) {
 	var sort_order = 0;
 	if (Todos.find({list_id: list_id}).count() > 0) {
-		sort_order = 1 + Todos.find({list_id: list_id}, {sort:{sort_order:-1}}).fetch()[0].sort_order;
+		sort_order = 1 + Todos.find({list_id: list_id, archived:false}, {sort:{sort_order:-1}}).fetch()[0].sort_order;
 	}
 	Todos.insert({
 		list_id: list_id, name: name, description: "",
 		archived: false, completed: false,
-		priority_level: 0, sort_order: sort_order, editing_description: true,
+		priority_level: Math.floor(Math.random()*3.0), sort_order: sort_order, editing_description: true,
 		timestamp_created: 5, timestamp_completed: null, timestamp_archived: null,
 	});
 }
 
-function sortUp(todo_id) {
+function sortTodoUp(todo_id) {
 	var todo = Todos.find(todo_id).fetch()[0];
 	if (todo.sort_order == 0)	return;
 	var other = Todos.find({list_id:todo.list_id, sort_order:todo.sort_order-1}).fetch()[0];
-	Todos.update(todo._id, {$set: {sort_order:todo.sort_order-1}});
+	Todos.update(todo._id,  {$set: {sort_order:todo.sort_order-1}});
 	Todos.update(other._id, {$set: {sort_order:other.sort_order+1}});
+}
+
+function sortTodoListUp(list_id) {
+	var list = TodoLists.find(list_id).fetch()[0];
+	if (list.sort_order == 0)	return;
+	var other = TodoLists.find({sort_order:list.sort_order-1}).fetch()[0];
+	TodoLists.update(list._id,  {$set: {sort_order:list.sort_order-1}});
+	TodoLists.update(other._id, {$set: {sort_order:other.sort_order+1}});
 }
 
 function resortList(list_id) {
 	var sort_order = 0;
-	Todos.find({list_id:list_id}, {sort:{sort_order:1}}).fetch()
+	Todos.find({list_id:list_id, archived:false}, {sort:{sort_order:1}}).fetch()
 		.forEach(function (t) { 
 			Todos.update(t._id, {$set:{sort_order:sort_order++}});
 	});
 }
 
+function resortLists() {
+	var sort_order = 0;
+	TodoLists.find({}, {sort:{sort_order:1}}).fetch()
+		.forEach(function (t) { 
+			TodoLists.update(t._id, {$set:{sort_order:sort_order++}});
+	});
+}
 
 if (Meteor.isClient) {
+	
+	Session.setDefault('priority_level', 0);
+	Session.setDefault('view_archived', false);
+	
+	Template.todosNavbar.archived = function() {
+		return Session.get('view_archived');
+	}
+	Template.todosNavbar.priorityLevel = function() {
+		return Session.get('priority_level');
+	}
+	
+	Template.todosNavbar.events({
+		'mousedown #navbar_clear': function (evt) {
+			TodoLists.find({}).forEach(function (thisList) {
+				Todos.find({list_id:thisList._id, archived:false, completed:true}).forEach(function (thisTodo) {
+					Todos.update(thisTodo._id, {$set: {archived:true}});
+				});
+				resortList(thisList._id);
+			});			
+	  	},
+		'mousedown #navbar_new': function (evt) {
+			if (TodoLists.find({}).count() > 0) {
+				sort_order = 1 + TodoLists.find({}, {sort:{sort_order:-1}}).fetch()[0].sort_order;
+			}			
+			TodoLists.insert({name:"new list", sort_order:sort_order});
+	  	},
+		'mousedown #navbar_priority': function (evt) {
+			Session.set('priority_level', (Session.get('priority_level') + 1) % 3);
+	  	},
+		'mousedown #navbar_archived': function (evt) {
+			Session.set('view_archived', !Session.get('view_archived'))
+	  	}
+	});
+
 	
 	Template.todoLists.todoLists = function () {
     	var lists = new Array();
 		TodoLists.find({}, {sort: {sort_order: 1}}).forEach(function (thisList) {
-			/*
-			var sel = { list_id:thisList._id, archived:Session.get('view_archived') };
-			if (tag_filter)
-				sel.tags = tag_filter;
-			if (Session.get('view_priority'))
-				sel.priority = true;
-			*/
-			var selection = {list_id:thisList._id};
+
+			var selection = { list_id:thisList._id, 
+							  priority_level: {$gte: Session.get('priority_level')},
+							  archived: Session.get('view_archived') };
+							
 			var theTodos = Todos.find(selection, {sort: {sort_order: 1}}).fetch();
-			if (theTodos.length > 0) {
-				lists.push({id:thisList._id,
-							name:thisList.name,
-							list:thisList, 
-							todos:theTodos,
-							adding_todo: thisList.adding_todo,
-							editing_todos_list: thisList.editing_todos_list });
-			}
+			lists.push({id:thisList._id,
+						name:thisList.name,
+						list:thisList, 
+						todos:theTodos,
+						adding_todo: thisList.adding_todo,
+						editing_todos_list: thisList.editing_todos_list });
 		});
 		return lists;
   	};
@@ -105,7 +150,8 @@ if (Meteor.isClient) {
 			TodoLists.update(this.id, {$set: {editing_todos_list: !this.editing_todos_list}});
 	  	},
 		'mousedown .todos_list_up': function (evt) {
-			alert("list up");
+			sortTodoListUp(this.id);
+			resortLists();
 	  	},
 		'dblclick .todos_list_description': function (evt) {
 //			Todos.update(this._id, {$set: {editing_description: !this.editing_description}});
@@ -148,10 +194,10 @@ if (Meteor.isClient) {
 			Todos.update(this._id, {$set: {editing_todo: !this.editing_todo}});
 	  	},
 		'mousedown .todo_up': function (evt) {
-			sortUp(this._id);
+			sortTodoUp(this._id);
 	  	},
 		'mousedown .todo_priority': function (evt) {
-			alert("prio");
+			Todos.update(this._id, {$set: {priority_level: (this.priority_level+1)%3}});
 	  	},
 		'dblclick .todo_description': function (evt) {
 			Todos.update(this._id, {$set: {editing_description: !this.editing_description}});
@@ -186,9 +232,9 @@ if (Meteor.isServer) {
 		//Todos.remove({});	
 		 		
 		if (Todos.find().count() === 0) {
-			var list1 = TodoLists.insert({name:"list 1"});
-			var list2 = TodoLists.insert({name:"list 2"});
-			var list3 = TodoLists.insert({name:"list 3"});
+			var list1 = TodoLists.insert({name:"list 1", sort_order:0});
+			var list2 = TodoLists.insert({name:"list 2", sort_order:1});
+			var list3 = TodoLists.insert({name:"list 3", sort_order:2});
 			
 			addNewTodo(list3, "task 1");
 			addNewTodo(list2, "task 2");
@@ -202,7 +248,7 @@ if (Meteor.isServer) {
 			addNewTodo(list1, "task 10");
 			addNewTodo(list3, "task 11");
 			addNewTodo(list1, "task 12");
-		};		   
+					};		   
 	});
 }
 

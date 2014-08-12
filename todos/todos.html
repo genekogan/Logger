@@ -1,8 +1,19 @@
 
 <template name = "todos">
+	{{> todosNavbar}}
+	<br/>
 	{{> todoLists}}	
 </template>
 
+
+<template name="todosNavbar">
+	<div id="navbar">
+		<div id="navbar_clear">clear</div>
+		<div id="navbar_new">new list</div>
+		<div id="navbar_priority" class="level{{priorityLevel}}">priority {{priorityLevel}}</div>
+		<div id="navbar_archived" class="{{archived}}">archived</div>
+	</div>
+</template>
 
 <template name="todoLists">
 	{{#each todoLists}}
@@ -11,7 +22,7 @@
 				<h1>
 					<div class="todos_list_name_display">
 						{{#if editing_todos_list}}
-							list name: 
+							name: 
 							<input type="text" size="20" class="todos-list-edit"
 							  value="{{name}}" />
 						{{else}}
@@ -45,7 +56,7 @@
 
 
 <template name="todo">
-	<li class="todo {{completed}}">
+	<li class="todo {{completed}} priority{{priority_level}}">
 		<div class="todo_item">
 			<div class="todo_name">
 				<div class="todo_name_display">
@@ -56,12 +67,12 @@
 					{{/if}}
 				</div>
 				<div class="todo_name_options">
-					<div class="todo_complete">[c]</div>
-					<div class="todo_edit">[e]</div>
-					<div class="todo_up">[u]</div>
-					<div class="todo_priority">[p]</div>
+					<div class="todo_priority level{{priority_level}}">&nbsp;</div>
+					<div class="todo_up"><img src="arrow_up.png"></div>
+					<div class="todo_edit"><img src="pencil.png"></div>
+					<div class="todo_complete"><img src="checkmark.png"></div>
 				</div>
-			</div>			
+			</div>
 			{{#if editing_todo}}
 				<div class="todo_delete">delete</div>
 				<br/>

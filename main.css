@@ -3,6 +3,8 @@ body {
 	font-family: "Andale Mono", monospace;
 	font-size:14px;
 	margin:0px;
+	height:712px;
+	white-space:nowrap;
 }
 
 h1 {
@@ -13,12 +15,41 @@ h2 {
 	font-size:12px;
 }
 
-#navbar {
+#navbar_main {
 	background-color: #666;
 	color:#fff;
 	margin:0px;
 	padding:4px;
 	margin-bottom:6px;
+	width:300px;
+	display:inline-block;
+}
+
+#navbar {
+	display:inline-block;
+	margin-left:24px;
+}
+
+#navbar_new, #navbar_priority, #navbar_archived, #navbar_clear {
+	display:inline-block;
+	border: 1px solid #000;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 3px;
+	padding:3px;
+}
+
+#navbar_priority.level0 {
+	background:#ddd;
+}
+#navbar_priority.level1 {
+	background:#ee2;
+}
+#navbar_priority.level2 {
+	background:#e41;
+}
+#navbar_archived.true {
+	background:#0f0;
 }
 
 .todo_description {
@@ -29,7 +60,7 @@ h2 {
 
 .todos_list {
 	background-color: #ccc;
-	border: 2px solid;
+	border: 1px solid #444;
 	height: 96%;
 	overflow-y:auto;
 	border-radius: 8px;
@@ -94,6 +125,14 @@ li {
 	margin-right:20px;
 }
 
+.priority1 .todo_name {
+	border-right: 3px solid #ee2;
+}
+.priority2 .todo_name {
+	border-right: 3px solid #e41;
+}
+
+
 .todo_name_display {
 	display: inline-block;
 }
@@ -104,12 +143,30 @@ li {
 }
 
 .todo_complete, .todo_edit, .todo_up, .todo_priority {
-	display: inline-block;
+	float:right;
+	margin-right:4px;
+}
+.todo_complete:hover, .todo_edit:hover, .todo_up:hover, .todo_priority:hover {
+	float:right;
+	cursor:pointer;
+}
+
+.todo_priority {
+	width:16px;
+}
+.todo_priority.level0 {
+	background-color:#fff;
+}
+.todo_priority.level1 {
+	background-color:#ee2;
+}
+.todo_priority.level2 {
+	background-color:#e41;
 }
 
 .todo_name_options {
 	display: none;
-	float: right;
+	float: right;	
 }
 
 .todo_item:hover .todo_name_options {
