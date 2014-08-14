@@ -1,28 +1,46 @@
+
 <template name="logger">
-	{{#each logs}}
-		{{> log}}
-	{{/each}}
-	<hr/>
-	{{#each logLists}}
-		{{> logList}}
-	{{/each}}
+	{{> loggerNavbar}}
+	<div id="viewEntries{{addingEntries}}">
+		{{#each logs}}
+			{{> log}}
+		{{/each}}
+	</div>
+	{{> addEntries}}
+</template>
+
+
+<template name="loggerNavbar">
+	<div id="navbar">	
+		<div id="rangeBegin" class="input-append">
+			<input data-format="yyyy-MM-dd" type="text" size=12 />
+			<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+		</div>
+		<div id="rangeEnd" class="input-append">
+			<input data-format="yyyy-MM-dd" type="text" size=12 />
+			<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+		</div>
+		<input type="button" class="loggerRange" value="range" />
+		<input type="button" class="loggerDay" value="1 day" />
+		<input type="button" class="loggerRandom" value="random" />
+		<div id="navbar_addEntries" class="{{addingEntries}}">Add Entries</div>
+	</div>	
 </template>
 
 
 <template name="log">
-  <div>
-    <span class="list_id">{{list_id}} :: </span>
-    <span class="type">{{type}} :: </span>
-    <span class="entry">{{entry}} :: </span>
-    <span class="timestamp">{{timestamp}} :: </span>
-    <span class="timestamp_created">{{timestamp_created}} </span>
-  </div>
+	<div class="entry">
+		<div class="logType">{{type}} :: </div>
+		<div class="logTimestamp">{{timestamp}} :: </div>
+		<div class="logEntry">{{entry}}</div>
+	</div>
 </template>
 
-<template name="logList">
-  <div>
-    <span class="id">{{id}} :: </span>
-    <span class="name">{{name}} </span>
-  </div>
+
+<template name="addEntries">
+	<div id="addEntries{{addingEntries}}">
+		<textarea class="addEntries" cols="90" rows="30"></textarea>
+	</div>
 </template>
+
 

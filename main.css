@@ -1,10 +1,21 @@
+
 body {
-    background-color: #aaa;
-	font-family: "Andale Mono", monospace;
+    background-color: #ccc;
+	font-family: "PT Mono", monospace;
 	font-size:14px;
-	margin:0px;
 	height:712px;
 	white-space:nowrap;
+	margin-top:0px;
+}
+
+body a, body a:visited {
+	color: #bb22bb;
+	text-decoration: none;
+}
+
+body a:hover {
+	color: #2244aa;
+    text-decoration: underline;
 }
 
 h1 {
@@ -16,18 +27,23 @@ h2 {
 }
 
 #navbar_main {
-	background-color: #666;
+	background-color: #bbb;
 	color:#fff;
 	margin:0px;
 	padding:4px;
-	margin-bottom:6px;
+	padding-left:20px;
+	margin-bottom:16px;
 	width:300px;
 	display:inline-block;
+	border: 1px solid #000;
 }
 
 #navbar {
+	background-color: #bbb;
 	display:inline-block;
 	margin-left:24px;
+	padding:2px;
+	border: 1px solid #000;
 }
 
 #navbar_new, #navbar_priority, #navbar_archived, #navbar_clear {
@@ -37,6 +53,10 @@ h2 {
 	margin-right: 4px;
 	margin-top: 3px;
 	padding:3px;
+}
+
+#navbar_new:hover, #navbar_priority:hover, #navbar_archived:hover, #navbar_clear:hover {
+	cursor:pointer;
 }
 
 #navbar_priority.level0 {
@@ -59,22 +79,23 @@ h2 {
 }
 
 .todos_list {
-	background-color: #ccc;
-	border: 1px solid #444;
-	height: 96%;
+	background-color: #bbb;
+	border: 2px solid #777;
+	height: 94%;
 	overflow-y:auto;
 	border-radius: 8px;
-	margin:10px;
-	padding-top:4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 8px;
+	padding-top: 4px;
 	display: inline-block;
-	width:300px;
+	width:280px;
 	vertical-align: top;
 }
 
 ul {
 	margin:0px;
 	padding:0px;
-	
 }
 
 li {
@@ -86,15 +107,11 @@ li {
 }
 
 
-
-
-
-
 .todos_list_name {
-	margin:4px;
+	margin-top:4px;
 	margin-left:16px;
 	margin-right:16px;
-	margin-bottom:24px;
+	margin-bottom:12px;
 	border-bottom: 1px solid #999;
 }
 
@@ -104,7 +121,15 @@ li {
 
 .todos_list_add, .todos_list_edit, .todos_list_up {
 	display: inline-block;
+	float:right;
+	margin-left:4px;
+	margin-right:4px;
 }
+
+.todos_list_add:hover, .todos_list_edit:hover, .todos_list_up:hover {
+	cursor:pointer;
+}
+
 
 .todos_list_name_options {
 	display: none;
@@ -124,17 +149,24 @@ li {
 	margin-left:24px;
 	margin-right:20px;
 }
+.todo_name:hover{
+	cursor:pointer;
+}
 
 .priority1 .todo_name {
-	border-right: 3px solid #ee2;
+	border-right: 2px solid #ee2;
 }
 .priority2 .todo_name {
-	border-right: 3px solid #e41;
+	border-right: 2px solid #e41;
 }
 
+.hint .todo_name {
+	border-bottom: 3px solid #999;
+}
 
 .todo_name_display {
 	display: inline-block;
+	padding-left:2px;
 }
 
 .completed .todo_name_display, .completed .todo_description {
@@ -151,9 +183,11 @@ li {
 	cursor:pointer;
 }
 
+
 .todo_priority {
 	width:16px;
 }
+
 .todo_priority.level0 {
 	background-color:#fff;
 }
@@ -180,4 +214,80 @@ li {
 .todo_item {
 	padding-top:2px;
 	padding-bottom:2px;
+}
+
+.todo_options {
+	margin-left:32px;
+	margin-right:24px;
+	padding-bottom:12px;
+}
+
+.todo_move_list {
+	padding-left:10px;
+	border-bottom: 1px solid #bbb;
+	width:55%;
+}
+
+.todo_archive:hover, .todo_move_list:hover {
+	cursor:pointer;
+}
+
+.bootstrap-datetimepicker-widget {
+	background-color:#fff;
+}
+
+.input-append {
+	display:inline-block;
+}
+
+#addEntries {
+	display:none;
+}
+#viewEntries {
+	display:block;
+	margin-bottom:32px;	
+}
+#addEntriesEditing {
+	display:block;	
+}
+#viewEntriesEditing {
+	display:none;	
+	margin-bottom:32px;	
+}
+
+.entry {
+	margin:5px;
+	margin-top:10px;
+	width:1280px;
+	border-bottom:1px solid #888;
+}
+
+.logType, .logTimestamp, .logEntry {
+	display:inline-block;
+	vertical-align:middle;
+}
+.logType {
+	width:4%;
+}
+.logTimestamp {
+	width:27%;
+}
+.logEntry {
+	width:69%;
+	white-space:normal;
+}
+
+#navbar_addEntries {
+	display:inline-block;
+	border: 1px solid #000;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 3px;
+	padding:3px;
+}
+#navbar_addEntries.Editing {
+	background-color:#f32;
+}
+#navbar_addEntries:hover {
+	cursor:pointer;
 }

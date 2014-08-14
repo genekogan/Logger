@@ -7,13 +7,10 @@ var okCancelEvents = function (selector, callbacks) {
 		if (evt.type === "keydown" && evt.which === 27) { // escape = cancel
         	cancel.call(this, evt);
       	} 
-		else if (evt.type === "keyup" && evt.which === 13 ||
-                 evt.type === "focusout") {
+		else if (evt.type === "keyup" && evt.which === 13 || evt.type === "focusout") {
         	var value = String(evt.target.value || "");
-        	if (value)
-          		ok.call(this, value, evt);
-        	else
-          		cancel.call(this, evt);
+        	if (value)	ok.call(this, value, evt);
+        	else		cancel.call(this, evt);
       	}
     };
   	return events;
@@ -27,8 +24,8 @@ function addNewTodo(list_id, name) {
 	Todos.insert({
 		list_id: list_id, name: name, description: "",
 		archived: false, completed: false,
-		priority_level: Math.floor(Math.random()*3.0), sort_order: sort_order, editing_description: true,
-		timestamp_created: 5, timestamp_completed: null, timestamp_archived: null,
+		priority_level: 0, sort_order: sort_order, editing_description: true,
+		timestamp_created: new Date(), timestamp_completed: null, timestamp_archived: null,
 	});
 }
 
@@ -50,19 +47,19 @@ function sortTodoListUp(list_id) {
 
 function resortList(list_id) {
 	var sort_order = 0;
-	Todos.find({list_id:list_id, archived:false}, {sort:{sort_order:1}}).fetch()
-		.forEach(function (t) { 
-			Todos.update(t._id, {$set:{sort_order:sort_order++}});
+	Todos.find({list_id:list_id, archived:false}, {sort:{sort_order:1}}).fetch().forEach(function (t) { 
+		Todos.update(t._id, {$set:{sort_order:sort_order++}});
 	});
 }
 
 function resortLists() {
 	var sort_order = 0;
-	TodoLists.find({}, {sort:{sort_order:1}}).fetch()
-		.forEach(function (t) { 
-			TodoLists.update(t._id, {$set:{sort_order:sort_order++}});
+	TodoLists.find({}, {sort:{sort_order:1}}).fetch().forEach(function (t) { 
+		TodoLists.update(t._id, {$set:{sort_order:sort_order++}});
 	});
 }
+
+
 
 if (Meteor.isClient) {
 	
@@ -89,7 +86,8 @@ if (Meteor.isClient) {
 			if (TodoLists.find({}).count() > 0) {
 				sort_order = 1 + TodoLists.find({}, {sort:{sort_order:-1}}).fetch()[0].sort_order;
 			}			
-			TodoLists.insert({name:"new list", sort_order:sort_order});
+			var newList = TodoLists.insert({name:"new list", sort_order:sort_order});
+			addNewTodo(newList, "new item");
 	  	},
 		'mousedown #navbar_priority': function (evt) {
 			Session.set('priority_level', (Session.get('priority_level') + 1) % 3);
@@ -109,12 +107,14 @@ if (Meteor.isClient) {
 							  archived: Session.get('view_archived') };
 							
 			var theTodos = Todos.find(selection, {sort: {sort_order: 1}}).fetch();
-			lists.push({id:thisList._id,
-						name:thisList.name,
-						list:thisList, 
-						todos:theTodos,
-						adding_todo: thisList.adding_todo,
-						editing_todos_list: thisList.editing_todos_list });
+			if (theTodos.length > 0) {
+				lists.push({id:thisList._id,
+							name:thisList.name,
+							list:thisList, 
+							todos:theTodos,
+							adding_todo: thisList.adding_todo,
+							editing_todos_list: thisList.editing_todos_list });
+			}
 		});
 		return lists;
   	};
@@ -127,7 +127,7 @@ if (Meteor.isClient) {
 	};
 	
 	Template.todo.description_empty = function() {
-	  	return this.description.length<2;
+	  	return this.description.length<1;
 	};
 	
 	Template.todo.completed = function() {
@@ -137,9 +137,13 @@ if (Meteor.isClient) {
 	Template.todo.getMoveLists = function() {
 		var moveListStr = '';
 		TodoLists.find({}).forEach(function (t) {
-			moveListStr += '<li><div class="todo_move" id="'+t._id+'">'+t.name+'</div></li>';
+			moveListStr += '<li class="todo_move_list"><div class="todo_move" id="'+t._id+'">'+t.name+'</div></li>';
 		});
 		return moveListStr;
+	}
+
+	Template.todo.descriptionHint = function() {
+		return ((!this.description_visible) & (this.description.length > 1)) ? "hint" : "none";
 	}
 
 	Template.todoLists.events({
@@ -152,9 +156,6 @@ if (Meteor.isClient) {
 		'mousedown .todos_list_up': function (evt) {
 			sortTodoListUp(this.id);
 			resortLists();
-	  	},
-		'dblclick .todos_list_description': function (evt) {
-//			Todos.update(this._id, {$set: {editing_description: !this.editing_description}});
 	  	}
 	});
 	
@@ -178,16 +179,22 @@ if (Meteor.isClient) {
 			Todos.update(this._id, {$set: {description_visible: !this.description_visible}});
 	  	},
 		'mousedown .todo_complete': function (evt) {
-			Todos.update(this._id, {$set: {completed: !this.completed}});
+			if (!this.completed)
+				Todos.update(this._id, {$set: {completed: true, timestamp_completed: new Date()}});
+			else
+				Todos.update(this._id, {$set: {completed: false}});
 	  	},
 		'mousedown .todo_move': function (evt) {
 			var other_list_id = evt.target.getAttribute('id');
-			Todos.update(this._id, {$set: {list_id: other_list_id, sort_order:9999}});
+			Todos.update(this._id, {$set: {list_id: other_list_id, sort_order:9999, editing_todo:false}});
 			resortList(this.list_id);
 			resortList(other_list_id);
 	  	},
-		'mousedown .todo_delete': function (evt) {
-			Todos.remove(this._id);
+		'mousedown .todo_archive': function (evt) {
+			if (!this.archived)
+				Todos.update(this._id, {$set: {archived:true, editing_todo:false, timestamp_archived: new Date()}});
+			else
+				Todos.update(this._id, {$set: {archived:false, editing_todo:false}});
 			resortList(this.list_id);
 	  	},
 		'mousedown .todo_edit': function (evt) {
@@ -248,7 +255,7 @@ if (Meteor.isServer) {
 			addNewTodo(list1, "task 10");
 			addNewTodo(list3, "task 11");
 			addNewTodo(list1, "task 12");
-					};		   
+		};		   
 	});
 }
 

@@ -15,6 +15,7 @@
 	</div>
 </template>
 
+
 <template name="todoLists">
 	{{#each todoLists}}
 		<div class="todos_list">
@@ -31,9 +32,9 @@
 					</div>
 					{{#if editing_todos_list}}{{else}}
 					<div class="todos_list_name_options">
-						<div class="todos_list_add">[+]</div>
-						<div class="todos_list_edit">[e]</div>
-						<div class="todos_list_up">[l]</div>
+						<div class="todos_list_up"><img src="arrow_up.png"></div>
+						<div class="todos_list_edit"><img src="pencil.png"></div>
+						<div class="todos_list_add"><img src="plus.png"></div>
 					</div>
 					{{/if}}
 				</h1>
@@ -56,7 +57,7 @@
 
 
 <template name="todo">
-	<li class="todo {{completed}} priority{{priority_level}}">
+	<li class="todo {{completed}} priority{{priority_level}} {{descriptionHint}}">
 		<div class="todo_item">
 			<div class="todo_name">
 				<div class="todo_name_display">
@@ -74,12 +75,14 @@
 				</div>
 			</div>
 			{{#if editing_todo}}
-				<div class="todo_delete">delete</div>
-				<br/>
-				move to:
-				<ul>
-					{{{getMoveLists}}}
-				</ul>
+				<div class="todo_options">
+					<div class="todo_archive"><b>archive</b></div>
+					<br/>
+					<b>move to:</b>
+					<ul>
+						{{{getMoveLists}}}
+					</ul>
+				</div>
 			{{else}}
 				{{#if description_visible}}
 					<div class="todo_description">
