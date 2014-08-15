@@ -47,10 +47,11 @@ function parseEntries(entries) {
 		var dateChange = entry.match(/^@([^A-Za-z]+)/);
 		if (dateChange != null) {
 			dateChange = dateChange[1].split(/\//);
-			timestamp.setMonth(dateChange[0]);
-			timestamp.setDate(dateChange[1]);
 			if (dateChange.length == 3) {
-				timestamp.setYear(dateChange[2]);
+				timestamp = new Date(dateChange[2], dateChange[0]-1, dateChange[1]);
+			} 
+			else {
+				timestamp = new Date(timestamp.getYear()+1900, dateChange[0]-1, dateChange[1]);
 			}
 			return false;
 		}
@@ -73,12 +74,23 @@ function parseEntries(entries) {
 
 			// set location
 			if (metadata.length == 2) {
-				location = [ 999, 888 ];
+				var logloc = LogLocations.find({name:metadata[1]});
+				if (logloc.count() > 0) {
+					location = logloc.fetch()[0].gps;
+				}
+				else {
+					location = null;
+				}
 			} 
 			else if (metadata.length == 3) {
-				location = [ metadata[1] , metadata[2] ];
+				location = [ parseFloat(metadata[1]), parseFloat(metadata[2]) ];
 			}
 		}
+		
+		// replace aliases with full names
+		LogNames.find({}).forEach(function (n) {entry=entry.replace("~"+n.alias, "~"+n.name)});
+		
+		// add log entry to meteor
 		addNewEntry(type, entry, timestamp, location)
 	});
 }
@@ -102,6 +114,12 @@ if (Meteor.isClient)
 		return Logs.find({timestamp: 
 			{$gte: Session.get('date_start'), $lte: Session.get('date_end')}},
 			{sort:{timestamp:1}});
+	};
+
+	Template.logger.numlogs = function() {
+		return Logs.find({timestamp: 
+			{$gte: Session.get('date_start'), $lte: Session.get('date_end')}},
+			{sort:{timestamp:1}}).count();
 	};
 	
 	Template.logger.events({
@@ -148,19 +166,19 @@ if (Meteor.isClient)
     	'click .loggerRange': function () {
 			var date1 = $('#rangeBegin').data().date.split("/");
 			var date2 = $('#rangeEnd').data().date.split("/");
-			setDateRange(new Date(date1[2],date1[0]-1,date1[1]), new Date(date2[2],date2[0]-1,date2[1]));			
+			setDateRange(new Date(date1[2],date1[0]-1,date1[1],5,5,0), new Date(date2[2],date2[0]-1,date2[1]),5,5,0);			
 	 	},
 		'click .loggerDay': function () {
 			var date1 = $('#rangeBegin').data().date.split("/");
 			var theDate = new Date(date1[2],date1[0]-1,date1[1]);
-			theDate.setHours(5);	theDate.setMinutes(0);	theDate.setSeconds(0);
+			theDate.setHours(5);	theDate.setMinutes(5);	theDate.setSeconds(0);
 			setDateRange(theDate, getDateNDaysFrom(theDate, 1));
 	 	},
 		'click .loggerRandom': function () {
-			var beginDate = new Date(2012,7,8);
+			var beginDate = new Date(2012,7,3);
 			var endDate = new Date();
 			var theDate = randomDate(beginDate, endDate)
-			theDate.setHours(5);	theDate.setMinutes(0);	theDate.setSeconds(0);
+			theDate.setHours(5);	theDate.setMinutes(5);	theDate.setSeconds(0);
 			setDateRange(theDate, getDateNDaysFrom(theDate, 1));			
 	 	},
 		'click #navbar_addEntries': function () {
@@ -174,6 +192,9 @@ if (Meteor.isClient)
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		//Logs.remove({}); 
+		//LogNames.remove({});
+		//LogLocations.remove({});
+		/*
 		if (Logs.find().count() === 0) {
 			for (var i = 0; i < 0; i++) {
 				addNewEntry(
@@ -181,7 +202,8 @@ if (Meteor.isServer) {
 					new Date(2014, Math.floor(Random.fraction()*12), Math.floor(Random.fraction()*28), Math.floor(Random.fraction()*24), Math.floor(Random.fraction()*60)),
 					[55,66]);  
 			}
-		};		   
+		};	
+		*/	   
 	});
 }
 

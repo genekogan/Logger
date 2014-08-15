@@ -1,6 +1,7 @@
 
 <template name="logger">
 	{{> loggerNavbar}}
+	{{numlogs}}
 	<div id="viewEntries{{addingEntries}}">
 		{{#each logs}}
 			{{> log}}
