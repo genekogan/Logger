@@ -106,7 +106,7 @@ function setDateRange(dateStart, dateEnd) {
 
 if (Meteor.isClient) 
 {	
-	Session.setDefault('isEditing', true);
+	Session.setDefault('isEditing', false);
 	Session.setDefault('date_start', new Date(2014, 5, 20));
 	Session.setDefault('date_end', new Date(2014, 5, 21));
 
