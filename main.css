@@ -291,3 +291,35 @@ li {
 #navbar_addEntries:hover {
 	cursor:pointer;
 }
+
+
+
+
+/* CALENDAR */
+
+.calendarContainer{
+	overflow: scroll;
+	height:100%;
+}
+.calendarMain {
+	background-color:#f00;
+	height:100%;
+	width:3800px;
+}
+.calendarWeek{
+	background-color:#ff0;
+	display: inline;
+	float:left;
+	width:220px;
+	height:98%;
+	margin-top:4px;
+	margin-bottom:4px;
+	margin-left:4px;
+	margin-right:6px;
+}
+
+.calendarDay{
+	background-color:#dd5;
+	margin:4px;
+	height:13.5%;
+}

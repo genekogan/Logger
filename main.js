@@ -2,6 +2,7 @@
 Router.map(function() {
   this.route('logger', {path: '/'});
   this.route('todos');
+  this.route('calendar');
 });
 
 

@@ -1,0 +1,34 @@
+
+<template name = "calendar">
+	{{> calendarNavbar}}
+	<br/>
+	{{> callie}}	
+</template>
+
+
+<template name="calendarNavbar">
+	<div id="navbar">
+		<div id="navbar_clear">clear</div>
+		<div id="navbar_new">new list</div>
+		<div id="navbar_priority" class="level{{priorityLevel}}">priority {{priorityLevel}}</div>
+		<div id="navbar_archived" class="{{archived}}">archived</div>
+	</div>
+</template>
+
+
+<template name="callie">
+	<div class="calendarContainer">
+		<div class="calendarMain">
+			{{#each weeks}}
+				<div class="calendarWeek">
+				{{#each days}}
+					<div class="calendarDay">
+					{{date}}
+					</div>
+				{{/each}}				
+				</div>
+			{{/each}}
+		</div>
+	</div>
+	
+</template>
